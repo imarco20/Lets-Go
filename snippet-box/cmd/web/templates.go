@@ -2,15 +2,17 @@ package main
 
 import (
 	"html/template"
+	"marcode.io/snippetbox/pkg/forms"
+	"marcode.io/snippetbox/pkg/models"
 	"path/filepath"
 	"time"
-	"marcode.io/snippetbox/pkg/models"
 )
 
 type templateData struct {
 	CurrentYear int
-	Snippet  *models.Snippet
-	Snippets []*models.Snippet
+	Form        *forms.Form
+	Snippet     *models.Snippet
+	Snippets    []*models.Snippet
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {
@@ -41,7 +43,7 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 		}
 
 		cache[name] = ts
-		
+
 	}
 
 	return cache, nil
@@ -52,5 +54,5 @@ func humanDate(t time.Time) string {
 }
 
 var functions = template.FuncMap{
-	"humanDate" : humanDate,
+	"humanDate": humanDate,
 }

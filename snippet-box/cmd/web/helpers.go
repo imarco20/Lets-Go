@@ -38,16 +38,15 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		app.serverError(w, err)
 		return
 	}
-	
+
 	buf.WriteTo(w)
 }
 
-func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData  {
+func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 	if td == nil {
 		td = &templateData{}
-	}	
+	}
 
 	td.CurrentYear = time.Now().Year()
 	return td
 }
-
