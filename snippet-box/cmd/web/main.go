@@ -23,6 +23,7 @@ type application struct {
 	session       *sessions.Session
 	snippets      *mysql.SnippetModel
 	templateCache map[string]*template.Template
+	users *mysql.UserModel
 }
 
 func main() {
@@ -49,10 +50,12 @@ func main() {
 
 	session := sessions.New([]byte(*secret))
 	session.Lifetime = 12 * time.Hour
+	session.Secure = true
+	session.SameSite = http.SameSiteStrictMode
 
 	tlsConfig := tls.Config{
 		PreferServerCipherSuites: true,
-		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
 	}
 
 	app := &application{
@@ -61,16 +64,17 @@ func main() {
 		session:       session,
 		snippets:      &mysql.SnippetModel{DB: db},
 		templateCache: templateCache,
+		users: &mysql.UserModel{DB: db},
 	}
 
 	srv := &http.Server{
-		Addr:     *addr,
-		ErrorLog: errorLog,
-		Handler:  app.routes(),
+		Addr:      *addr,
+		ErrorLog:  errorLog,
+		Handler:   app.routes(),
 		TLSConfig: &tlsConfig,
 
-		IdleTimeout: time.Minute,
-		ReadTimeout: 5 * time.Second,
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
